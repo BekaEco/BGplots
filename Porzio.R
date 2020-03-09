@@ -268,3 +268,78 @@ top_row <- plot_grid(pA,pB, labels = c("A","B"), rel_widths = c(3,1), label_size
 draft.Porzio<-plot_grid(top_row, pC, ncol = 1)
 
 ggsave(filename = "figs\\draft.Porzio.pdf", width = 8, height = 5, units = "in")
+
+
+#### Post upload - plot improvement section.
+#A + B
+#I want the species to be listed on otherside of the y axis so it is closer to the B plots
+# I also want to shade the three different acid conditions
+
+pA.2<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
+  geom_point() +
+  theme_minimal() + 
+  labs(x = "quadrat ID", 
+       y = "") +
+  scale_y_discrete(position = "right") +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  scale_size_continuous(name = "coverage (%)") +
+  theme(legend.position = "left") +
+  annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 26, alpha = .2, fill = "#78c679") +
+  annotate("rect", xmin = 9.5, xmax = 18.5, ymin = 0, ymax = 26, alpha = .2, fill = "#c2e699") +
+  annotate("rect", xmin = 18.5, xmax = 27.5, ymin = 0, ymax = 26, alpha = .2, fill = "#ffffcc") +
+  geom_point() + #by putting this on again, it makes them on top of the shading. 
+  guides(color = guide_legend(override.aes = list(size=4))) +
+  coord_cartesian(clip = "off") +
+  annotate(geom = "text", x = 1.5, y= 26.5, label = "pH =", size =4) +
+  annotate(geom = "text", x = 5, y= 26.5, label = "8.1", size = 4) +
+  annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size =4) +
+  annotate(geom = "text", x = 23, y= 26.5, label = "6.7", size =4)
+
+pB.2<-ggplot(cov.diff, aes(x= reorder(algae, dif), y = dif, fill = color))+
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  ylab("change in coverage") +
+  xlab("") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme(legend.position = "none",
+        axis.text.y = element_blank(),
+        plot.margin = margin(2,0,0,0, "line")) 
+
+  
+top_row <- plot_grid(pA.2,pB.2, labels = c("A","B"), 
+                     rel_widths = c(3,1), label_size = 12, align = "h")
+draft2.Porzio<-plot_grid(top_row, pC, ncol = 1)
+
+
+##CUT
+
+
+pB.2<-ggplot(cov.diff, aes(x= reorder(algae, dif), y = dif, fill = color))+
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  ylab("change in coverage") +
+  xlab("") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme(legend.position = "none",
+        plot.margin = margin(2,0,0,0, "line"))
+
+pB.2<-ggplot(cov.diff, aes(y = reorder(algae, dif), x = dif, fill = color))+
+  geom_col() +
+  theme_minimal() +
+  xlab("change in coverage") +
+  ylab("") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme(legend.position = "none",
+        plot.margin = margin(2,0,0,0, "line"),
+        axis.text.y = element_blank())
+
