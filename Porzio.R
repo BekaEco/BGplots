@@ -1,5 +1,6 @@
 library("tidyverse")
 library("stringr")
+library("cowplot")
 
 
 kite_ugly <-read.csv("Porzio_middleout.csv", skip = 1)
@@ -80,7 +81,7 @@ ggplot(data=kit, aes(replicate, coverage,color)) +
   labs(x = "quadrat",
        y= "coverage (%)")
 
-total.cov <-kit %>% group_by(replicate) %>% summarize(traycov= sum(coverage))
+total.cov <- kit %>% group_by(replicate) %>% summarize(traycov= sum(coverage))
 #this should add up to 100% or less for each quadrat. This makes no sense.
 
 #moving on...
@@ -102,17 +103,23 @@ ggplot(data=kit, aes(replicate, y = reorder(algae, coverage), color = color, siz
   theme_minimal()
 
 #get the mean coverage for each algae by sector
-sect.cov <-kit %>% group_by(sector, algae) %>% summarise(meancov = mean(coverage))
+sect.cov <- kit %>% group_by(sector, algae) %>% summarise(meancov = mean(coverage))
 
 ggplot(data=sect.cov, aes(sector, y = reorder(algae, meancov), size = ifelse(meancov==0, NA, meancov))) +
   geom_point() +
   theme_minimal()
 
+#get the mean coverage for each algae by sector
+pH.cov <-kit %>% group_by(pH, algae) %>% summarise(meancov = mean(coverage))
 
-#Now I will take the means of the sectors, that is the main issue
+#mean coverage by pH
+ggplot(data=pH.cov, aes(pH, y = reorder(algae, meancov), size = ifelse(meancov==0, NA, meancov))) +
+  geom_point() +
+  theme_minimal()
 
-ggplot(data = kit, aes(x=sector, y = algae, fill = coverage)) +
-  geom_point()
+
+
+
 
 
 ##violin plot or density plot wouled be next?
@@ -121,3 +128,143 @@ ggplot(data=kit, aes(x = algae, y = replicate, size = coverage)) +
 
 #3/8/2020 leaving off: I think I need to make a multi panel plot? 
 
+#3/9/2020 I want to make a correlation matrix from the highest to lowest pH
+
+#create what is essentially a heat map? Bubble chart?
+
+pH.8<-kit %>% filter(pH == 8.1)
+cov.8 <-pH.8 %>% group_by(algae) %>% summarise(pH8cov = mean(coverage))
+
+pH.6<-kit %>% filter(pH == 6.7)
+cov.6 <-pH.6 %>% group_by(algae, color) %>% summarise(pH6cov = mean(coverage))
+
+cov.diff <- full_join(cov.6,cov.8, by="algae")
+cov.diff$dif <- cov.diff$pH6cov - cov.diff$pH8cov
+
+ranked <- arrange(cov.diff, dif)
+ranked$rank <- 1:nrow(ranked)
+ranked <- ranked[,c("algae","rank")]
+
+#Now I want to assign this rank value to the large table of microalgae species
+
+kit.rank <- left_join(kit, ranked, by = "algae")
+
+ggplot(cov.diff, aes(x= reorder(algae, dif), y = dif, fill = color))+
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  ylab("mean change in coverage\nfrom pH 8.1 to 6.7 ") +
+  xlab("Microalgae")
+  
+#I've decided on three plots
+#A. All the coverage values, to indicate it doesn't make sense to me
+
+pA <- ggplot(data=kit, aes(replicate, coverage, color)) +
+  geom_point() +
+  theme_minimal() +
+  labs(x = "quadrat",
+       y= "coverage (%)")
+
+#B This is similar to the kite plot, reorder and improve
+pB <-ggplot(data=kit, aes(replicate, y = reorder(algae, coverage), color = color, size = ifelse(coverage==0, NA, coverage))) +
+  geom_point() +
+  theme_minimal()
+
+#C. This is the change map
+pC <-ggplot(cov.diff, aes(x= reorder(algae, dif), y = dif, fill = color))+
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  ylab("mean change in coverage\nfrom pH 8.1 to 6.7 ") +
+  xlab("Microalgae")
+
+
+
+#This is my confirmed version of a rough draft. Now I improve each plot!
+top_row <- plot_grid(pB,pC, labels = c("A","B"), label_size = 12)
+plot_grid(top_row, pA, labels = c("","C"), ncol = 1)
+
+#Returning to plot 1, I need to work on overall presentation and lables. I also 
+# want to figure out how to reorder the algae into a ranked chart that 
+# mimics chart B.
+
+#New A - each quadrat and coverage, ranked by overall change
+pA<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
+  geom_point() +
+  theme_minimal() + 
+  labs(x = "Quadrat ID", 
+       y = "Microalgae species") +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  scale_size_continuous(name = "coverage (%)")
+
+#New B - change from ph level
+pB<-ggplot(cov.diff, aes(x= reorder(algae, dif), y = dif, fill = color))+
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  ylab("mean change in coverage\nfrom pH 8.1 to 6.7 ") +
+  xlab("Microalgae") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta"))
+
+#New B.2.0 - change from ph level No labels
+pB<-ggplot(cov.diff, aes(x= reorder(algae, dif), y = dif, fill = color))+
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  ylab("mean change in coverage\nfrom pH 8.1 to 6.7 ") +
+  xlab("") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme(legend.position = "none",
+        axis.text.y = element_blank())
+ 
+#New C = outlier % coverage values
+ggplot(data=kit, aes(x = replicate, y = ifelse(coverage==0, NA, coverage), fill = color)) +
+  geom_point(shape = 21, size = 5, alpha = .5) +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme_minimal() +
+  labs(x = "quadrat",
+       y= "coverage (%)")
+
+top<-ggplot(data=kit, aes(x = replicate, y = ifelse(coverage==0, NA, coverage), color = color)) +
+  geom_point(shape = 16, size = 5, alpha = .5) +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("", "", "")) +
+  scale_y_continuous(limits = c(26,160),
+                     breaks = c(50,100, 150)) +
+  geom_hline(yintercept = 100, linetype="dashed", color = "gray50", size=1) +
+  theme_minimal() +
+  labs(x = "",
+       y= "")+
+  theme(axis.text.x = element_blank(),
+        legend.text = element_blank(),
+        legend.key = element_blank()) +
+  geom_text(data=subset(kit, coverage >= 100),
+            aes(replicate,coverage,label=algae))
+
+bot<-ggplot(data=kit, aes(x = replicate, y = ifelse(coverage==0, NA, coverage), color = color)) +
+  geom_point(shape = 16, size = 5, alpha = .5) +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  scale_y_continuous(limits = c(0,25)) +
+  theme_minimal() +
+  labs(x = "quadrat",
+       y= "coverage (%)") 
+
+
+pC<-plot_grid(top, bot, labels = "C",ncol = 1, align = "v")
+
+#This is my confirmed version of a rough draft. Now I improve each plot!
+top_row <- plot_grid(pA,pB, labels = c("A","B"), rel_widths = c(3,1), label_size = 12)
+draft.Porzio<-plot_grid(top_row, pC, ncol = 1)
+
+ggsave(filename = "figs\\draft.Porzio.pdf", width = 8, height = 5, units = "in")

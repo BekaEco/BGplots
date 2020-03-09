@@ -23,8 +23,11 @@ ggplot() +
   geom_point(data = lit, aes(x = d13C_VPDB, y = d15N_air, color = "#92c5de" ), size = 2, shape = 3) +
   geom_point(data = pel, aes(x = d13C_VPDB, y = d15N_air, color = "#0571b0"), size = 2, shape = 8) +
   theme_cowplot() +
-  scale_fill_identity(name = "title" , guide = "legend", aesthetics = "color") +
-  #theme(legend.position = c(-23,-10)) +
+  scale_fill_identity(name = "" , 
+                      guide = "legend", 
+                      aesthetics = "color", 
+                      labels = c("terrestrial","pelagic","littoral","rainbow trout")) +
+  #theme(legend.position = c(-23,0)) +
   
   #scale_color_manual(values = c("#f4a582"="#f4a582", "#008837" = "#008837"),
                    #  lables = c("terrestroal", "fish")) +
@@ -54,4 +57,20 @@ ggplot() +
 ##right now I'm getting frustrated that I cannot plot from separate dataframes. It seems I first need to 
 ## gather them into a single dataframe.
 
-#So I gather my data
+#So I gather my data?
+##
+
+pALLCN<-ggplot() +
+  geom_point(data = fish, aes(x = d13C_VPDB, y = d15N_air, color = "#f4a582"), size = 2, shape = 20) +
+  geom_point(data = ter, aes(x = d13C_VPDB, y = d15N_air, color = "#008837"), size = 2, shape = 17) +
+  geom_point(data = lit, aes(x = d13C_VPDB, y = d15N_air, color = "#92c5de" ), size = 2, shape = 3) +
+  geom_point(data = pel, aes(x = d13C_VPDB, y = d15N_air, color = "#0571b0"), size = 2, shape = 8) +
+  theme_cowplot() +
+  scale_fill_identity(name = "" , 
+                      guide = "legend", 
+                      aesthetics = "color", 
+                      labels = c("terrestrial","pelagic","littoral","rainbow trout")) +
+  labs(x = expression(paste(delta^{13}, "C (\u2030)")),
+       y = expression(paste(delta^{15}, "N (\u2030)")))
+
+
