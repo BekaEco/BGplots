@@ -389,4 +389,16 @@ draft2.Porzio<-plot_grid(top_row, pC.2, labels =c("","c"), ncol = 1, label_size 
 # main goal of this project. I could sum the species in the quadrants, or I could
 # look at each sector. There was a decrease in richness for sure.
 
+plot_grid(
+  plot_grid(
+    ggplot()
+    , get_legend(bot.2)
+    , ncol = 1)
+  , plot_grid(
+    top.2 + theme(legend.position = "none")
+    , bot.2 + theme(legend.position = "none")
+    , ncol = 1
+    , align = "v")
+  , rel_widths = c(1,7)
+)
 
