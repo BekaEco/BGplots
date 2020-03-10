@@ -297,24 +297,107 @@ pA.2<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = col
   annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size =4) +
   annotate(geom = "text", x = 23, y= 26.5, label = "6.7", size =4)
 
-pB.2<-ggplot(cov.diff, aes(x= reorder(algae, dif), y = dif, fill = color))+
+pB.2<-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
   geom_col() +
-  coord_flip() +
   theme_minimal() +
-  ylab("change in coverage") +
-  xlab("") +
+  xlab("mean overal change (coverage amount)") +
+  ylab("") +
   scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
                     name = "",
                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
   theme(legend.position = "none",
         axis.text.y = element_blank(),
-        plot.margin = margin(2,0,0,0, "line")) 
+        plot.margin = margin(t=15,r = 0,b =10,l = -30)) 
 
+##NewC
+
+theme_set(theme_minimal())
+top.2<-ggplot(data=kit, aes(x = replicate, y = ifelse(coverage==0, NA, coverage), color = color)) +
+  geom_point(shape = 16, size = 5, alpha = .5) +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("", "", "")) +
+  scale_y_continuous(limits = c(26,160),
+                     breaks = c(50,100, 150)) +
+  geom_hline(yintercept = 100, linetype="dashed", color = "gray50", size=1) +
+  labs(x = "",
+       y= "")+
+  theme(axis.text.x = element_blank(),
+        legend.text = element_blank(),
+        legend.key = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "left") +
+  geom_text(data=subset(kit, coverage >= 100),
+            aes(replicate,coverage,label=algae))
+
+bot.2<-ggplot(data=kit, aes(x = replicate, y = ifelse(coverage==0, NA, coverage), color = color)) +
+  geom_point(shape = 16, size = 5, alpha = .5) +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  scale_y_continuous(limits = c(0,25)) +
+  labs(x = "quadrat",
+       y= "coverage (%)") +
+  theme(legend.position = "left")
+
+
+
+plot_grid(top.2, bot.2, labels = "C",ncol = 1, align = "v")
+
+
+plot_grid(
+  plot_grid(
+    ggplot()
+    , get_legend(bot.2)
+    , ncol = 1)
+  , plot_grid(
+    top.2 + theme(legend.position = "none")
+    , bot.2 + theme(legend.position = "none")
+    , ncol = 1
+    , align = "v")
+  , rel_widths = c(1,7)
+)
+
+
+
+
+top.2<-ggplot(data=kit, aes(x = replicate, y = ifelse(coverage==0, NA, coverage), color = color)) +
+  geom_point(shape = 16, size = 5, alpha = .5) +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("", "", "")) +
+  scale_y_continuous(limits = c(26,160),
+                     breaks = c(50,100, 150)) +
+  geom_hline(yintercept = 100, linetype="dashed", color = "gray50", size=1) +
+  labs(x = "",
+       y= "")+
+  theme(axis.text.x = element_blank(),
+        legend.text = element_blank(),
+        legend.key = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "left") +
+  geom_text(data=subset(kit, coverage >= 100),
+            aes(replicate,coverage,label=algae))
+
+bot.2<-ggplot(data=kit, aes(x = replicate, y = ifelse(coverage==0, NA, coverage), color = color)) +
+  geom_point(shape = 16, size = 5, alpha = .5) +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  scale_y_continuous(limits = c(0,25)) +
+  labs(x = "quadrat ID",
+       y= "coverage (%)") +
+  theme(legend.position = "left")
+
+
+
+##Putting all three of these together
   
 top_row <- plot_grid(pA.2,pB.2, labels = c("A","B"), 
-                     rel_widths = c(3,1), label_size = 12, align = "h")
+                     rel_widths = c(3,1), label_size = 12)
 draft2.Porzio<-plot_grid(top_row, pC, ncol = 1)
 
+align_plots(pA.2, pB.2)
 
 ##CUT
 
