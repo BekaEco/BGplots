@@ -389,16 +389,122 @@ draft2.Porzio<-plot_grid(top_row, pC.2, labels =c("","c"), ncol = 1, label_size 
 # main goal of this project. I could sum the species in the quadrants, or I could
 # look at each sector. There was a decrease in richness for sure.
 
-plot_grid(
-  plot_grid(
-    ggplot()
-    , get_legend(bot.2)
-    , ncol = 1)
-  , plot_grid(
-    top.2 + theme(legend.position = "none")
-    , bot.2 + theme(legend.position = "none")
-    , ncol = 1
-    , align = "v")
-  , rel_widths = c(1,7)
-)
+library(patchwork)
+A.cow<-
+ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
+  geom_point() +
+  theme_cowplot() + 
+  labs(x = "quadrat ID", 
+       y = "") +
+  scale_y_discrete(position = "right") +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  scale_size_continuous(name = "coverage (%)") +
+  theme(legend.position = "left") +
+  annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 26, alpha = .2, fill = "#78c679") +
+  annotate("rect", xmin = 9.5, xmax = 18.5, ymin = 0, ymax = 26, alpha = .2, fill = "#c2e699") +
+  annotate("rect", xmin = 18.5, xmax = 27.5, ymin = 0, ymax = 26, alpha = .2, fill = "#ffffcc") +
+  geom_point() + #by putting this on again, it put the points on top of the shading. But, I had to have it earlier too.
+  guides(color = guide_legend(override.aes = list(size=4))) +
+  coord_cartesian(clip = "off") + #otherwise the pH values are cut off
+  annotate(geom = "text", x = 1.5, y= 26.5, label = "pH =", size = 4) +
+  annotate(geom = "text", x = 5, y= 26.5, label = "8.1", size = 4) +
+  annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size = 4) +
+  annotate(geom = "text", x = 23, y= 26.5, label = "6.7", size = 4)
 
+B.cow<-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
+  geom_col() +
+  theme_cowplot() +
+  xlab("mean overall change (coverage amount)") +
+  ylab("") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme(legend.position = "none",
+        axis.text.y = element_blank(),
+        plot.margin = margin(t=15,r = 0,b =10,l = -30)) ##This is a manual manipulation of the plot to try to make the rows line ip
+
+A.cow + B.cow
+plot_grid(A.cow,B.cow, rel_widths = c(3,1), label_size = 12)
+
+
+##Copy to switch which plot has the legend.
+A.cent<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
+  geom_point() +
+  theme_cowplot() + 
+  labs(x = "quadrat ID", 
+       y = "") +
+  scale_y_discrete(position = "right") +
+  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                     name = "",
+                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  scale_size_continuous(name = "coverage (%)") +
+  theme(legend.position = "left",
+              axis.text.y = element_blank()) +
+  annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 27, alpha = .2, fill = "#78c679") +
+  annotate("rect", xmin = 9.5, xmax = 18.5, ymin = 0, ymax = 27, alpha = .2, fill = "#c2e699") +
+  annotate("rect", xmin = 18.5, xmax = 27.5, ymin = 0, ymax = 27, alpha = .2, fill = "#ffffcc") +
+  geom_point() + #by putting this on again, it put the points on top of the shading. But, I had to have it earlier too.
+  guides(color = guide_legend(override.aes = list(size=4))) +
+  coord_cartesian(clip = "off") + #otherwise the pH values are cut off
+  annotate(geom = "text", x = 1.5, y= 26.5, label = "pH =", size = 4) +
+  annotate(geom = "text", x = 5, y= 26.5, label = "8.1", size = 4) +
+  annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size = 4) +
+  annotate(geom = "text", x = 23, y= 26.5, label = "6.7", size = 4)
+
+B.cent <-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
+  geom_col() +
+  theme_cowplot() +
+  xlab("mean overall change (coverage amount)") +
+  ylab("") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme(legend.position = "none",
+        axis.text.y = element_text(hjust=.5),
+        plot.margin = margin(t=30,r = 0,b =15,l = -30))
+
+Porzio <-plot_grid(A.cent,B.cent, rel_widths = c(4,3))
+
+ggsave(filename = "figs\\Porzio_alignmentproblems.pdf", width = 15, height = 7.5, units = "in" )
+
+A.cent + B.cent
+
+png(filename = "figs/Porzio_alignmentproblems.png",
+    width = 1200, height = 500)
+Porzio
+dev.off()
+
+###This is the same plot, but without margin adjustments.
+
+B.nobump <-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
+  geom_col() +
+  theme_cowplot() +
+  xlab("mean change (coverage amount)") +
+  ylab("") +
+  annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 27, alpha = 0, fill = "#78c679") +
+  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
+                    name = "",
+                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
+  theme(legend.position = "none",
+        axis.text.y = element_text(hjust=.5),
+        plot.margin = margin(t=0,r = 0,b =0,l = -34))
+
+Porzio.nobump <-plot_grid(A.cent,B.nobump, rel_widths = c(4,3), align = "h")
+
+png(filename = "figs/Porzio_final.png",
+    width = 1200, height = 500)
+Porzio.nobump
+dev.off()
+
+
+p3<-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
+  geom_col()
+p1<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
+  geom_point()
+p2<-ggplot(kit.rank, aes(y= reorder(algae, rank), x = coverage, fill = color))+
+  geom_col()
+
+p1+p2
+p1+p3
