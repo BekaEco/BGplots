@@ -1,10 +1,15 @@
-## Exact script for Porzio plot
+#===============WORKFLOW TEMPLATE=====================================
+#Created by Rebekah Stiling on 3/11/2020, stilir@uw.edu
+#Data provided by Trevor Branch based from Porzio et al 2011 Effects of OA on macroalgal communities
+#Figure created as part of Beatiful Graphics taught by Branch Winter 2020
+#This is a final script for one of four figures created for the class
+#=====================================================================
+# Exact script for Porzio plot
 library("tidyverse")
 library("stringr")
 library("cowplot")
 
 # Read in and organize the data ####
-
 kite_ugly<-read_csv("Porzio et al 2011 kite diagrams.csv", skip = 1)
 head(kite_ugly)
 kite_ugly<-kite_ugly[,1:28] #get rid of empty columns at the end
@@ -79,16 +84,17 @@ ranked <- ranked[,c("algae","rank")]
 #Now I want to assign this rank value to the large table of microalgae species
 kit.rank <- left_join(kit, ranked, by = "algae")
 
+
 pA.fin<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
   geom_point() +
-  theme_cowplot() + 
+  theme_minimal() + 
   labs(x = "quadrat", 
        y = "") +
   scale_y_discrete(position = "right") +
   scale_color_manual(values=c('#4fa59b', '#e6a836', '#b05a64'),
                      name = "",
                      labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
-  scale_size_continuous(name = "coverage (%)") +
+  scale_size_continuous(name = "% coverage") +
   theme(legend.position = "left",
         axis.text.y = element_blank(),
         axis.ticks = element_line(color = "gray"),
@@ -106,83 +112,37 @@ pA.fin<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = c
 
 pB.fin <-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
   geom_col() +
-  theme_cowplot() +
-  xlab("mean change (coverage amount)") +
+  theme_minimal() +
+  xlab("change (mean % coverage)") +
   ylab("") +
   annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 27, alpha = 0, fill = "#78c679") +
   scale_fill_manual(values=c('#4fa59b', '#e6a836', '#b05a64'),
                     name = "",
                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
   theme(legend.position = "none",
-        axis.text.y = element_text(hjust=.5),
-        plot.margin = margin(t=0,r = 0,b =0,l = -34),
+        axis.text.y = element_text(hjust=.5,face = "italic"),
+        plot.margin = margin(t=0,r = 0,b =0,l = -30),
         axis.ticks = element_line(color = "gray"),
         axis.line = element_line(color = "gray"))
 
-Porzio.final <-plot_grid(pA.fin,pB.fin, rel_widths = c(4,3), align = "h")
+Porzio.final <-plot_grid(pA.fin,pB.fin, rel_widths = c(4,3), align = "h", label_x = c(.15,.25),labels = c("A","B"))
 
-png(filename = "figs/Porzio_final_Stiling.png",
-    width = 1200, height = 500)
-Porzio.nobump
-dev.off()
+#png(filename = "figs/Porzio_final_Stiling.png",
+#    width = 1200, height = 500)
+#Porzio.final
+#dev.off()
 
-
-
-
-
-
-##Working area once again
-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
-  geom_point() +
-  theme_cowplot() + 
-  labs(x = "quadrat ID", 
-       y = "") +
-  scale_y_discrete(position = "right") +
-  scale_color_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
-                     name = "",
-                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
-  scale_size_continuous(name = "coverage (%)") +
-  theme(legend.position = "left",
-        axis.text.y = element_blank(),
-        axis.ticks = element_line(color = "gray"),
-        axis.line = element_line(color = "gray")) +
-  annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 27, alpha = .2, fill = "#78c679") +
-  annotate("rect", xmin = 9.5, xmax = 18.5, ymin = 0, ymax = 27, alpha = .2, fill = "#c2e699") +
-  annotate("rect", xmin = 18.5, xmax = 27.5, ymin = 0, ymax = 27, alpha = .2, fill = "#ffffcc") +
-  geom_point() + #by putting this on again, it put the points on top of the shading. But, I had to have it earlier too.
-  guides(color = guide_legend(override.aes = list(size=4))) +
-  coord_cartesian(clip = "off") + #otherwise the pH values are cut off
-  annotate(geom = "text", x = 1.5, y= 26.5, label = "pH =", size = 4) +
-  annotate(geom = "text", x = 5, y= 26.5, label = "8.1", size = 4) +
-  annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size = 4) +
-  annotate(geom = "text", x = 23, y= 26.5, label = "6.7", size = 4)
+#creates .png file from most recent ggplot object at 600 dots per inch (high) res
+ggsave(file='figs/Porzio_final_Stiling.png', width=12, height=5, dpi=600, plot = Porzio.final)
 
 
 
+A.blank<-pA.fin + theme(panel.grid.major = element_blank())
+B.blank<-pB.fin + theme(panel.grid.major = element_blank(),
+               panel.grid.minor = element_blank())
+Porzio.blank <-plot_grid(A.blank,B.blank, rel_widths = c(4,3), align = "h", label_x = c(.15,.25),labels = c("A","B"))
+ggsave(file='figs/Porzio_final_Stiling_nogrid.png', width=12, height=5, dpi=600, plot = Porzio.blank)
 
-##working area once again
+##Last Idea, can I use these to plots to create a gif that goes back 
+# and fourth with and without gridlines? HA! That would be cool, I may try.
 
-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
-  geom_col() +
-  theme_cowplot() +
-  xlab("mean change (coverage amount)") +
-  ylab("") +
-  annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 27, alpha = 0, fill = "#78c679") +
-  scale_fill_manual(values=c('#4fa59b', '#cc7722', '#b05a64'),
-                    name = "",
-                    labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
-  theme(legend.position = "none",
-        axis.text.y = element_text(hjust=.5),
-        plot.margin = margin(t=0,r = 0,b =0,l = -34),
-        axis.ticks = element_line(color = "gray"),
-        axis.line = element_line(color = "gray")) +
-  coord_cartesian(ylim=c(0,27))
-
-
-beka.theme.2plot <- theme_cowplot() + theme(legend.position = "none",
-                                      axis.text.y = element_text(hjust=.5),
-                                      plot.margin = margin(t=0,r = 0,b =0,l = -34),
-                                      axis.ticks = element_line(color = "gray"),
-                                      axis.line = element_line(color = "gray"))
-
-p + panel.grid.major.x = element_blank()
