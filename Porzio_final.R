@@ -1,4 +1,4 @@
-#===============WORKFLOW TEMPLATE=====================================
+#====================================================
 #Created by Rebekah Stiling on 3/11/2020, stilir@uw.edu
 #Data provided by Trevor Branch based from Porzio et al 2011 Effects of OA on macroalgal communities
 #Figure created as part of Beatiful Graphics taught by Branch Winter 2020
@@ -104,7 +104,7 @@ pA.fin<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = c
   annotate("rect", xmin = 18.5, xmax = 27.5, ymin = 0, ymax = 27, alpha = .2, fill = "#ffffcc") +
   geom_point() + #by putting this on again, it put the points on top of the shading. But, I had to have it earlier too.
   guides(color = guide_legend(override.aes = list(size=4))) +
-  coord_cartesian(clip = "off") + #otherwise the pH values are cut off
+  #coord_cartesian(clip = "off") + #otherwise the pH values are cut off
   annotate(geom = "text", x = 1.5, y= 26.5, label = "pH =", size = 4) +
   annotate(geom = "text", x = 5, y= 26.5, label = "8.1", size = 4) +
   annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size = 4) +

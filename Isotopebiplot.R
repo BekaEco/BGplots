@@ -128,4 +128,5 @@ CNbiplot.all<-ggplot() +
                       labels = c("rainbow trout","terrestrial","littoral","pelagic")) +
   guides(colour = guide_legend(override.aes = list(pch = c(20, 17,3,8), 
                                                    color = c("#c487a9", "#4d7d53","#92c5de","#0571b0")))) +
-  theme(legend.position=c(.70,.20))
+  theme(legend.position=c(.70,.20),
+        axis.title.y = element_text(angle = 0))
