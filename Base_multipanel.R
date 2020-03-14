@@ -82,7 +82,7 @@ for(j in 1:(length(Lakenames))){
     axis(2, at = seq(-10, 10,5), labels = TRUE, las = 2)
     axis(1, at = seq(-35, 15, 5), labels = FALSE)
   } else if (j == 13){
-    axis(2, at = seq(-10, 10,5), labels = TRUE)
+    axis(2, at = seq(-10, 10,5), labels = TRUE, las = 2)
     axis(1, at = seq(-35, 15, 5), labels = TRUE)
   } else if (j == 14 || j == 15|| j == 16) {
     axis(2, at = seq(-10, 10,5), labels = FALSE)
