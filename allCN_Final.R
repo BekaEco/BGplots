@@ -42,11 +42,12 @@ ggplot(data = CN, aes(x = d13C_VPDB, y = d15N_air, shape =type)) +
   facet_wrap(~Lake) +
   labs(x = expression(paste(delta^{13}, "C (\u2030)")),
        y = expression(paste(delta^{15}, "N (\u2030)"))) +
-  theme()
+  theme(legend.box.background = element_rect(colour = "black"))
 
-+
+#+
   guides(colour = guide_legend(override.aes = list(pch = c(20, 17,3,8), 
                                                    color = c("#c487a9", "#4d7d53","#92c5de","#0571b0")))) +
   theme(legend.position=c(.70,.20),
         axis.title.y = element_text(angle = 0))
 
+Sabikunnahar
