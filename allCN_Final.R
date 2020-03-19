@@ -1,4 +1,3 @@
-#
 #Created by Rebekah Stiling on 3/13/2020, stilir@uw.edu ####
 #Data collected by Rebekah Stiling for MS Thesis at UW SAFS. 
 #Figure created as part of Beatiful Graphics taught by Branch Winter 2020
@@ -8,6 +7,7 @@
 
 library(tidyverse)
 library(lemon)
+library(cowplot)
 
 #In order to use ggplot, I need one dataframe
 fish <- read_csv("fishCN.csv")
@@ -112,3 +112,4 @@ Kulla<-
   scale_y_continuous(breaks = c(-8, -4, 0, 4))
 
 ggsave(file='figs/Kulla_final_Stiling.png', width=6, height=6, dpi=600, plot = Kulla)
+
