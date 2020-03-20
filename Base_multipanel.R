@@ -20,12 +20,12 @@ fish_CN$include2sigma <- "exclude"
 
 
 Lakenames <-as.vector(unique(fish_CN$Lake))
-plotname <- paste0("figs/allLakesIsoscapeswithPolygon",scenarioID ,".png")
-png(filename = plotname, width = 800, height = 800) #where will this go and what size?
-par(oma = c(5,6,1,9), #outer margins, c(bottom, left, top, and right) Room for d13C and d15N labels at the end
+plotname <- paste0("figs/FINALallLakesIsoscapeswithPolygon",scenarioID ,".png")
+png(filename = plotname, width = 900, height =800) #where will this go and what size?
+par(oma = c(5,6,1,20), #outer margins, c(bottom, left, top, and right) Room for d13C and d15N labels at the end
     mfrow = c(4,4), ##mfrow is my four rows by four columns 
     mar = c(.5,.5,1.5,.5), #margins, c(bottom,
-    cex.axis = 1.75) 
+    cex.axis = 1.7) 
 
 # This loop does two things, first, it plots each lake with a polygon around it. Second, it also
 # indicates which points are in or out of the two polygons.
@@ -66,8 +66,8 @@ for(j in 1:(length(Lakenames))){
   #PLOT####
   plot(x = mixture$d13C_VPDB, y = mixture$d15N_air,
        pch = 20,
-       cex = 1.5,
-       col = "#a6611a",
+       cex = 1,
+       col = "black",
        ylim = c(-15,11),
        xlim = c(-37,-17),
        xlab = "", #expression(paste(delta^{13}, "C (\u2030)")),
@@ -76,7 +76,7 @@ for(j in 1:(length(Lakenames))){
        yaxt = "n",
        xaxt = "n",
        ann = FALSE)
-  title(Lakenames[j], line= -1)
+  title(Lakenames[j], line= -2, cex =1.4)
   ##This little section is the if/else for the axis lables#
   if(j == 1 || j == 5 || j == 9){
     axis(2, at = seq(-10, 10,5), labels = TRUE, las = 2)
@@ -116,43 +116,44 @@ for(j in 1:(length(Lakenames))){
   polygon(x = all.2sigma.verts.x[polygon.2sigma.edges], 
           y = all.2sigma.verts.y[polygon.2sigma.edges], border = FALSE, 
           col = rgb(red = 190, green = 190, blue = 190, alpha = 100, maxColorValue = 300))
+  arrows(x0 = Ter.d13C.mu, y0 = Ter.d15N.mu-Ter.d15N.sigma,
+         x1 = Ter.d13C.mu, y1 = Ter.d15N.mu+Ter.d15N.sigma,
+         code = 3, angle = 90, length = 0, col = "#238b4580", lwd = 2)
+  arrows(x0 = Ter.d13C.mu-Ter.d13C.sigma, y0 = Ter.d15N.mu,
+         x1 = Ter.d13C.mu+Ter.d13C.sigma, y1 = Ter.d15N.mu,
+         code = 3, angle = 90, length = 0, col = "#238b4580", lwd = 2)
   points(x = Ter.d13C.mu, y = Ter.d15N.mu,
          pch = 17,
          col = "#238b45",
-         cex = 1.5)
-  arrows(x0 = Ter.d13C.mu, y0 = Ter.d15N.mu-Ter.d15N.sigma, 
-         x1 = Ter.d13C.mu, y1 = Ter.d15N.mu+Ter.d15N.sigma, 
-         code = 3, angle = 90, length = 0.05, col = "#238b45", lwd = 2)
-  arrows(x0 = Ter.d13C.mu-Ter.d13C.sigma, y0 = Ter.d15N.mu, 
-         x1 = Ter.d13C.mu+Ter.d13C.sigma, y1 = Ter.d15N.mu, 
-         code = 3, angle = 90, length = 0.05, col = "#238b45", lwd = 2)
+         cex = 2)
   
+  arrows(x0 = Lit.d13C.mu, y0 = Lit.d15N.mu-Lit.d15N.sigma, 
+         x1 = Lit.d13C.mu, y1 = Lit.d15N.mu+Lit.d15N.sigma, 
+         code = 3, angle = 90, length = 0, col = "#66c2a480", lwd = 2)
+  arrows(x0 = Lit.d13C.mu-Lit.d13C.sigma, y0 = Lit.d15N.mu, 
+         x1 = Lit.d13C.mu+Lit.d13C.sigma, y1 = Lit.d15N.mu, 
+         code = 3, angle = 90, length = 0, col = "#66c2a480", lwd = 2)
   points(Lit.d13C.mu, Lit.d15N.mu,
          pch = 8,
          col = "#66c2a4",
-         cex = 1.5)
-  arrows(x0 = Lit.d13C.mu, y0 = Lit.d15N.mu-Lit.d15N.sigma, 
-         x1 = Lit.d13C.mu, y1 = Lit.d15N.mu+Lit.d15N.sigma, 
-         code = 3, angle = 90, length = 0.05, col = "#66c2a4", lwd = 2)
-  arrows(x0 = Lit.d13C.mu-Lit.d13C.sigma, y0 = Lit.d15N.mu, 
-         x1 = Lit.d13C.mu+Lit.d13C.sigma, y1 = Lit.d15N.mu, 
-         code = 3, angle = 90, length = 0.05, col = "#66c2a4", lwd = 2)
+         cex = 2)
   
+  arrows(x0 = Pelag.d13C.mu, y0 = Pelag.d15N.mu-Pelag.d15N.sigma, 
+         x1 = Pelag.d13C.mu, y1 = Pelag.d15N.mu+Pelag.d15N.sigma, 
+         code = 3, angle = 90, length = 0, col = "#526EFF80", lwd = 2)
+  arrows(x0 = Pelag.d13C.mu-Pelag.d13C.sigma, y0 = Pelag.d15N.mu, 
+         x1 = Pelag.d13C.mu+Pelag.d13C.sigma, y1 = Pelag.d15N.mu, 
+         code = 3, angle = 90, length = 0, col = "#526EFF80", lwd = 2)
   points(x = Pelag.d13C.mu, y = Pelag.d15N.mu,
          pch = 4,
          col = "#526EFF",
-         cex = 1.5)
-  arrows(x0 = Pelag.d13C.mu, y0 = Pelag.d15N.mu-Pelag.d15N.sigma, 
-         x1 = Pelag.d13C.mu, y1 = Pelag.d15N.mu+Pelag.d15N.sigma, 
-         code = 3, angle = 90, length = 0.05, col = "#526EFF", lwd = 2)
-  arrows(x0 = Pelag.d13C.mu-Pelag.d13C.sigma, y0 = Pelag.d15N.mu, 
-         x1 = Pelag.d13C.mu+Pelag.d13C.sigma, y1 = Pelag.d15N.mu, 
-         code = 3, angle = 90, length = 0.05, col = "#526EFF", lwd = 2)
+         cex = 2)
   ##Make this optional:
   points(x = mixture$d13C_VPDB-TEF_C.mu, y = mixture$d15N_air-TEF_N.mu,
-         pch = 20,
-         col = "black",
-         cex = 1.5)
+         pch = 21,
+         col = "#a6611a",
+         bg = "#a6611a90", 
+         cex = 1.25)
   arrows(x0 = mixture$d13C_VPDB-TEF_C.mu, y0 = mixture$d15N_air-TEF_N.mu-TEF_N.sigma,
          x1 = mixture$d13C_VPDB-TEF_C.mu, y1 = mixture$d15N_air-TEF_N.mu+TEF_N.sigma,
          code = 3, angle = 90, length = 0, col = "black", lty = 3, lwd = 2)
@@ -161,26 +162,26 @@ for(j in 1:(length(Lakenames))){
          code = 3, angle = 90, length = 0, col = "black", lty = 3, lwd = 2)
   
   
-  ##Now I need to track which fish to remove
-  # library(sp)
-  In.out.fish1sig <- point.in.polygon(point.x = mixture$d13C_VPDB-TEF_C.mu, 
-                                      point.y = mixture$d15N_air-TEF_N.mu,
-                                      pol.x = all.verts.x[polygon.edges], 
-                                      pol.y = all.verts.y[polygon.edges])
-  
-  fish.to.keep1sig <- mixture$Identifier.1[which(In.out.fish1sig == 1)]
-  
-  
-  fish_CN$include1sigma[match(fish.to.keep1sig,fish_CN$Identifier.1)] <- "include"
-  
-  In.out.fish2sig <- point.in.polygon(point.x = mixture$d13C_VPDB-TEF_C.mu, point.y = mixture$d15N_air-TEF_N.mu,
-                                      pol.x = all.2sigma.verts.x[polygon.2sigma.edges], 
-                                      pol.y = all.2sigma.verts.y[polygon.2sigma.edges])
-  
-  fish.to.keep2sig <- mixture$Identifier.1[which(In.out.fish2sig == 1)]
-  
-  
-  fish_CN$include2sigma[match(fish.to.keep2sig,fish_CN$Identifier.1)] <- "include"
+  # ##Now I need to track which fish to remove
+  # # library(sp)
+  # In.out.fish1sig <- point.in.polygon(point.x = mixture$d13C_VPDB-TEF_C.mu, 
+  #                                     point.y = mixture$d15N_air-TEF_N.mu,
+  #                                     pol.x = all.verts.x[polygon.edges], 
+  #                                     pol.y = all.verts.y[polygon.edges])
+  # 
+  # fish.to.keep1sig <- mixture$Identifier.1[which(In.out.fish1sig == 1)]
+  # 
+  # 
+  # fish_CN$include1sigma[match(fish.to.keep1sig,fish_CN$Identifier.1)] <- "include"
+  # 
+  # In.out.fish2sig <- point.in.polygon(point.x = mixture$d13C_VPDB-TEF_C.mu, point.y = mixture$d15N_air-TEF_N.mu,
+  #                                     pol.x = all.2sigma.verts.x[polygon.2sigma.edges], 
+  #                                     pol.y = all.2sigma.verts.y[polygon.2sigma.edges])
+  # 
+  # fish.to.keep2sig <- mixture$Identifier.1[which(In.out.fish2sig == 1)]
+  # 
+  # 
+  # fish_CN$include2sigma[match(fish.to.keep2sig,fish_CN$Identifier.1)] <- "include"
   
 }
 
@@ -188,10 +189,11 @@ for(j in 1:(length(Lakenames))){
 mtext(text= expression(paste(delta^{13}, "C (\u2030)")) ,side=1,line=4,outer=TRUE, cex = 1.75)
 mtext(text= expression(paste(delta^{15}, "N (\u2030)")) ,side=2,line=3,outer=TRUE, cex = 1.75)
 #legend
-legend(xpd = NA , "topright", inset = c(-.6,-3.4) ,#xpd = NA; so topright means whole area, a little outside, OK to print outside margin
-       legend = c("fish", "fish+TEF", "","terrestrial", "pelagic", "littoral", "","polygon", "1 sd", "2 sd") ,
+legend(xpd = NA , "topright", inset = c(-1.25,-3.4) ,#xpd = NA; so topright means whole area, a little outside, OK to print outside margin
+       legend = c("trout", "trout adjusted\nfor trophic enrichment", "","terrestrial", "pelagic", "littoral", "",
+       "resource polygon", "1 SD source mean", "2 SD source mean") ,
        pch = c(20, 20,NA,  17,4,8,NA,15,15,15),
-       col = c("#a6611a", "black",NA, "#238b45", "#526EFF", "#66c2a4",NA,
+       col = c("black", "#a6611a",NA, "#238b45", "#526EFF", "#66c2a4",NA,
                rgb(red = 190, green = 190, blue = 190, alpha = 300, maxColorValue = 300),
                rgb(red = 190, green = 190, blue = 190, alpha = 200, maxColorValue = 300),
                rgb(red = 190, green = 190, blue = 190, alpha = 100, maxColorValue = 300)),
@@ -202,3 +204,5 @@ legend(xpd = NA , "topright", inset = c(-.6,-3.4) ,#xpd = NA; so topright means 
 ## 11/21/19
 ## I  need to add shades of gray for the polygons in order to ID what is 1, sd, and 2 sd - notes to self
 dev.off()
+
+##This is finished, I need to put in the file and write caption.

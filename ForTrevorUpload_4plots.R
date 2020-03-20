@@ -1,9 +1,7 @@
-#====================================================
-#Created by Rebekah Stiling on 3/11/2020, stilir@uw.edu
-#Data provided by Trevor Branch based from Porzio et al 2011 Effects of OA on macroalgal communities
-#Figure created as part of Beatiful Graphics taught by Branch Winter 2020
-#This is a final script for one of four figures created for the class
-#=====================================================================
+##ACTUAL FINAL FOR TREVOR
+
+###Picking up where I left off after submitting these plots to a power point for comments####
+
 # Exact script for Porzio plot
 library("tidyverse")
 library("stringr")
@@ -85,7 +83,9 @@ ranked <- ranked[,c("algae","rank")]
 kit.rank <- left_join(kit, ranked, by = "algae")
 
 
-pA.fin<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
+#PLOT A####
+pA.fin2<-
+  ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = color, size = ifelse(coverage==0, NA, coverage))) +
   geom_point() +
   theme_minimal() + 
   labs(x = "quadrat", 
@@ -95,55 +95,53 @@ pA.fin<-ggplot(data=kit.rank, aes(replicate, y = reorder(algae, rank), color = c
                      name = "",
                      labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
   scale_size_continuous(name = "% coverage") +
-  theme(legend.position = "left",
+  theme(plot.margin = margin(t=0,r = 0,b =0,l = -4),
+        legend.position = "left",
+        # legend.box.margin = margin(t=0,r = -10,b =0,l = 0),
+        # legend.justification=c(1, 0), 
+        legend.key.width=unit(-1, "lines"), 
+        # legend.key.height=unit(1, "lines"), 
+        legend.box.spacing = unit(0, "lines"),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size =10),
         axis.text.y = element_blank(),
         axis.ticks = element_line(color = "gray"),
-        axis.line = element_line(color = "gray")) +
+        axis.line = element_line(color = "gray"),
+        axis.text.x = element_text(size = 8),
+        axis.title.x = element_text(size = 10)) +
   annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 27, alpha = .2, fill = "#78c679") +
-  annotate("rect", xmin = 9.5, xmax = 18.5, ymin = 0, ymax = 27, alpha = .2, fill = "#e6a836") +
-  annotate("rect", xmin = 18.5, xmax = 27.5, ymin = 0, ymax = 27, alpha = .2, fill = "#ffffcc") +
+  annotate("rect", xmin = 9.5, xmax = 18.5, ymin = 0, ymax = 27, alpha = .2, fill = "#ffffcc") +
+  annotate("rect", xmin = 18.5, xmax = 27.5, ymin = 0, ymax = 27, alpha = .2, fill = "#e6a836") +
   geom_point() + #by putting this on again, it put the points on top of the shading. But, I had to have it earlier too.
   guides(color = guide_legend(override.aes = list(size=4))) +
   #coord_cartesian(clip = "off") + #otherwise the pH values are cut off
-  annotate(geom = "text", x = 1.5, y= 26.5, label = "pH =", size = 4) +
-  annotate(geom = "text", x = 5, y= 26.5, label = "8.1", size = 4) +
-  annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size = 4) +
-  annotate(geom = "text", x = 23, y= 26.5, label = "6.7", size = 4)
+  annotate(geom = "text", x = 1.5, y= 26.5, label = "pH =", size = 3) +
+  annotate(geom = "text", x = 5, y= 26.5, label = "8.1", size = 3) +
+  annotate(geom = "text", x = 14, y= 26.5, label = "7.8", size = 3) +
+  annotate(geom = "text", x = 23, y= 26.5, label = "6.7", size = 3)
 
-pB.fin <-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
+pA.fin2
+
+ 
+#PLOT B####
+pB.fin2 <-ggplot(cov.diff, aes(y= reorder(algae, dif), x = dif, fill = color))+
   geom_col() +
   theme_minimal() +
-  xlab("change (mean % coverage)") +
+  xlab("overall change (mean % coverage)") +
   ylab("") +
   annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0, ymax = 27, alpha = 0, fill = "#78c679") +
   scale_fill_manual(values=c('#4fa59b', '#e6a836', '#b05a64'),
                     name = "",
                     labels= c("Chlorophyta", "Ochrophyta", "Rhodophyta")) +
   theme(legend.position = "none",
-        axis.text.y = element_text(hjust=.5,face = "italic"),
-        plot.margin = margin(t=0,r = 0,b =0,l = -30),
+        axis.text.y = element_text(hjust=.5,face = "italic", size =8),
+        axis.text.x = element_text(size = 8),
+        axis.title.x = element_text(size = 10),
+        plot.margin = margin(t=0,r = 0,b =0,l = -23),
         axis.ticks = element_line(color = "gray"),
         axis.line = element_line(color = "gray"))
 
-Porzio.final <-plot_grid(pA.fin,pB.fin, rel_widths = c(4,3), align = "h", label_x = c(.15,.25),labels = c("A","B"))
+Porzio.final2 <-plot_grid(pA.fin2,pB.fin2, rel_widths = c(3,2.25), align = "h", label_x = c(.1,.3),labels = c("A","B"))
 
-#png(filename = "figs/Porzio_final_Stiling.png",
-#    width = 1200, height = 500)
-#Porzio.final
-#dev.off()
-
-#creates .png file from most recent ggplot object at 600 dots per inch (high) res
-ggsave(file='figs/Porzio_final_Stiling.png', width=12, height=5, dpi=600, plot = Porzio.final)
-
-
-
-A.blank<-pA.fin + theme(panel.grid.major = element_blank())
-B.blank<-pB.fin + theme(panel.grid.major = element_blank(),
-               panel.grid.minor = element_blank())
-Porzio.blank <-plot_grid(A.blank,B.blank, rel_widths = c(4,3), align = "h", label_x = c(.15,.25),labels = c("A","B"))
-ggsave(file='figs/Porzio_final_Stiling_nogrid.png', width=12, height=5, dpi=600, plot = Porzio.blank)
-
-##Last Idea, can I use these to plots to create a gif that goes back 
-# and fourth with and without gridlines? HA! That would be cool, I may try.
-
-
+#creates .png file from most recent ggplot object at 600 dots per inch (high) res (was 12 width)
+ggsave(file='figs/Porzio_FOUR_final_Stiling.png', width=9.5, height=5, dpi=600, plot = Porzio.final2)
